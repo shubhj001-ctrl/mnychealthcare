@@ -374,8 +374,10 @@ function loadBannerImage() {
     const bannerImage = localStorage.getItem('mnycBannerImage');
     const heroSection = document.querySelector('.hero');
     
-    if (bannerImage && heroSection) {
-        heroSection.style.backgroundImage = `url('${bannerImage}')`;
+    if (heroSection) {
+        // Use stored image if available, otherwise use default
+        const imageUrl = bannerImage || 'https://loremflickr.com/1200/600/healthcare';
+        heroSection.style.backgroundImage = `url('${imageUrl}')`;
     }
 }
 
