@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services - MNYC Healthcare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Services Page Specific Styles */
+        .services-hero {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.6) 0%, rgba(0, 168, 255, 0.4) 100%);
+            padding: 5rem 20px;
+            text-align: center;
+        }
+
+        .services-hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .services-hero h1 {
+            font-size: 3.5rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .services-hero p {
+            font-size: 1.3rem;
+            color: #e0e0e0;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .services-section {
+            padding: 4rem 20px;
+            background: linear-gradient(135deg, #0a1628 0%, #1a2d4d 50%, #0f1f3a 100%);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .service-card {
+            position: relative;
+            height: 350px;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 102, 204, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 102, 204, 0.15);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(0, 168, 255, 0.6);
+            box-shadow: 0 20px 50px rgba(0, 102, 204, 0.4);
+        }
+
+        .service-card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.3) 0%, rgba(0, 168, 255, 0.2) 100%);
+        }
+
+        .service-card:hover .service-card-image {
+            transform: scale(1.1);
+        }
+
+        .service-card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.6) 0%, rgba(0, 168, 255, 0.45) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            opacity: 1;
+            transition: all 0.4s ease;
+        }
+
+        .service-card:hover .service-card-overlay {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.75) 0%, rgba(0, 168, 255, 0.6) 100%);
+        }
+
+        .service-card-icon {
+            font-size: 3rem;
+            color: #00ffff;
+            margin-bottom: 1rem;
+        }
+
+        .service-card-title {
+            font-size: 1.5rem;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .service-card-subtitle {
+            font-size: 0.9rem;
+            color: #e0e0e0;
+        }
+
+        /* Modal Styles */
+        .service-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .service-modal.active {
+            display: flex;
+        }
+
+        .service-modal-content {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(45, 45, 45, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 102, 204, 0.3);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 700px;
+            width: 100%;
+            animation: slideInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .service-modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .service-modal-close:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .service-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .service-modal-icon {
+            font-size: 3rem;
+            color: #00ffcc;
+            flex-shrink: 0;
+        }
+
+        .service-modal-title {
+            font-size: 2rem;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .service-modal-body {
+            color: #e0e0e0;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .service-modal-section {
+            margin-bottom: 2rem;
+        }
+
+        .service-modal-section h3 {
+            color: #00ffcc;
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .service-modal-section h3 i {
+            font-size: 1.2rem;
+        }
+
+        .service-modal-section p {
+            margin: 0;
+            color: #c0c0c0;
+        }
+
+        .service-modal-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .service-modal-section li {
+            padding: 0.5rem 0 0.5rem 2rem;
+            position: relative;
+            color: #c0c0c0;
+        }
+
+        .service-modal-section li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #00ffcc;
+            font-weight: bold;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .services-hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .service-modal-content {
+                padding: 2rem;
+                border-radius: 15px;
+            }
+
+            .service-modal-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="index.html" class="logo">
+                    <img src="logo-white.png" alt="MNYC Healthcare" class="logo-img">
+                </a>
+                <div class="scroll-brand-text">MNYC Healthcare</div>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="services.html" class="nav-link active">Services</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Services Hero -->
+    <section class="services-hero">
+        <div class="container">
+            <div class="services-hero-content">
+                <h1>Our Services</h1>
+                <p>Comprehensive healthcare billing and administrative solutions tailored to your practice's needs</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Grid -->
+    <section class="services-section">
+        <div class="container">
+            <div class="services-grid" id="servicesGrid"></div>
+        </div>
+    </section>
+
+    <!-- Service Detail Modal -->
+    <div class="service-modal" id="serviceModal">
+        <div class="service-modal-content" id="modalContent">
+            <button class="service-modal-close" onclick="closeServiceModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="serviceDetails"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>MNYC Healthcare</h4>
+                <p>Premium Medical Billing Service Provider</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="#">Provider Services</a></li>
+                    <li><a href="#">Virtual Staffing</a></li>
+                    <li><a href="#">Medical Billing</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 MNYC Healthcare. All rights reserved.</p>
+            <a href="#">Privacy & Policy</a>
+        </div>
+    </footer>
+
+    <script>
+        // Services Data
+        const services = [
+            {
+                id: 1,
+                title: "Credentialing & Contracting",
+                icon: "fas fa-handshake",
+                image: "https://loremflickr.com/500/500/business,contract",
+                shortDesc: "Establish your practice",
+                details: {
+                    description: "The first step to establish any new practice in the market and plays a crucial role in establishing proper cash flow and inward remittance according to the given contract.",
+                    whatWeOffer: [
+                        "Data-driven approach to maximize reimbursement rates",
+                        "Expert contract negotiation with various payers",
+                        "Detailed form preparation and submission",
+                        "Market-based contract analysis",
+                        "In-depth experience with different payer guidelines"
+                    ],
+                    benefits: "Ensuring your practice gets the best contracted rates while maintaining compliance with all payer requirements."
+                }
+            },
+            {
+                id: 2,
+                title: "Eligibility & Benefits Verification",
+                icon: "fas fa-check-circle",
+                image: "https://loremflickr.com/500/500/healthcare,verification",
+                shortDesc: "Avoid denial issues",
+                details: {
+                    description: "One of the most neglected areas that can leave a lasting financial impact. According to surveys, 15% of denials come from improper patient eligibility verification.",
+                    whatWeOffer: [
+                        "Detailed and accurate patient coverage verification",
+                        "Benefit scrutiny at the beginning of treatment",
+                        "Error-free demographic verification",
+                        "Faster authorization processing",
+                        "Reduced denial rates"
+                    ],
+                    benefits: "Our seasoned staff identifies coverage issues early, preventing denials and ensuring patient satisfaction at the front desk."
+                }
+            },
+            {
+                id: 3,
+                title: "Medical Coding",
+                icon: "fas fa-file-medical",
+                image: "https://loremflickr.com/500/500/medical,document",
+                shortDesc: "Accurate coding services",
+                details: {
+                    description: "Incorrect coding leads to increased denials, reduced cash flow, higher claim life, and increased AR days.",
+                    whatWeOffer: [
+                        "Certified coders with expert knowledge",
+                        "Error-free coding at the first submission",
+                        "Comprehensive review of rendered services",
+                        "Compliance with ICD-10, CPT, and HCPCS standards",
+                        "Reduced AR days and claim rejections"
+                    ],
+                    benefits: "Clean and error-free claims pass adjudication without denial, increasing your cash flow in a timely manner."
+                }
+            },
+            {
+                id: 4,
+                title: "Demo & Charge Entry",
+                icon: "fas fa-keyboard",
+                image: "https://loremflickr.com/500/500/computer,data",
+                shortDesc: "First step in RCM",
+                details: {
+                    description: "The first step in Revenue Cycle Management but prone to maximum number of mistakes - either from typos or human error.",
+                    whatWeOffer: [
+                        "Multi-level scrutinization process",
+                        "Error-free data entry with quality checks",
+                        "Proper super bill to claim conversion",
+                        "EDI compliance verification",
+                        "Pre-submission audit process"
+                    ],
+                    benefits: "Proper and error-free entry leads to lesser denials, increased Clean Claim Ratio, and better revenue generation."
+                }
+            },
+            {
+                id: 5,
+                title: "Payment & Credit Analysis",
+                icon: "fas fa-credit-card",
+                image: "https://loremflickr.com/500/500/finance,money",
+                shortDesc: "Electronic payment handling",
+                details: {
+                    description: "We have seasoned and well-trained staff to handle all payment processing with electronic transaction management.",
+                    whatWeOffer: [
+                        "Transition from manual to electronic transactions",
+                        "Automated payment processing",
+                        "Regular audits for outstanding amounts",
+                        "Payment dispute resolution",
+                        "Cleaner accounting records"
+                    ],
+                    benefits: "Reduces burden on your office and maintains clean books with no manual record-keeping requirements."
+                }
+            },
+            {
+                id: 6,
+                title: "AR & Appeals Management",
+                icon: "fas fa-chart-line",
+                image: "https://loremflickr.com/500/500/analytics,graph",
+                shortDesc: "Denial management experts",
+                details: {
+                    description: "We have a robust and streamlined process to handle Accounts Receivable with a dedicated denial management team.",
+                    whatWeOffer: [
+                        "Highly skilled denial management team",
+                        "Quick denial resolution (48-72 hours TAT)",
+                        "Rigorous medical document review",
+                        "Strategic appeal submissions",
+                        "Reduced AR days"
+                    ],
+                    benefits: "Our lowest TAT and increased number of touches ensure faster resolution and better recovery rates."
+                }
+            }
+        ];
+
+        // Render Services Grid
+        function renderServices() {
+            // Load custom images from localStorage if available
+            const customImages = JSON.parse(localStorage.getItem('mnycServiceImages')) || {};
+            
+            const grid = document.getElementById('servicesGrid');
+            grid.innerHTML = services.map(service => {
+                const imageUrl = customImages[service.id] || service.image;
+                return `
+                    <div class="service-card" onclick="openServiceModal(${service.id})">
+                        <img src="${imageUrl}" alt="${service.title}" class="service-card-image" onerror="this.src='${service.image}'">
+                        <div class="service-card-overlay">
+                            <div class="service-card-icon">
+                                <i class="${service.icon}"></i>
+                            </div>
+                            <h3 class="service-card-title">${service.title}</h3>
+                            <p class="service-card-subtitle">${service.shortDesc}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Open Service Modal
+        function openServiceModal(serviceId) {
+            const service = services.find(s => s.id === serviceId);
+            const modal = document.getElementById('serviceModal');
+            const detailsDiv = document.getElementById('serviceDetails');
+
+            detailsDiv.innerHTML = `
+                <div class="service-modal-header">
+                    <div class="service-modal-icon">
+                        <i class="${service.icon}"></i>
+                    </div>
+                    <h2 class="service-modal-title">${service.title}</h2>
+                </div>
+
+                <div class="service-modal-body">
+                    <div class="service-modal-section">
+                        <p>${service.details.description}</p>
+                    </div>
+
+                    <div class="service-modal-section">
+                        <h3><i class="fas fa-star"></i> What We Offer</h3>
+                        <ul>
+                            ${service.details.whatWeOffer.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="service-modal-section">
+                        <h3><i class="fas fa-lightbulb"></i> Key Benefits</h3>
+                        <p>${service.details.benefits}</p>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        // Close Service Modal
+        function closeServiceModal() {
+            document.getElementById('serviceModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('serviceModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeServiceModal();
+            }
+        });
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeServiceModal();
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderServices();
+            
+            // Active nav link
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                if (link.textContent.toLowerCase() === 'services') {
+                    link.classList.add('active-link');
+                } else {
+                    link.classList.remove('active-link');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - MNYC Healthcare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .admin-container {
+            display: none;
+        }
+
+        .admin-container.active {
+            display: block;
+        }
+
+        /* =====================
+           LOGIN PAGE
+           ===================== */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-header p {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .form-group input::placeholder {
+            color: #777;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ff9999;
+            padding: 0.875rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            text-align: center;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* =====================
+           DASHBOARD
+           ===================== */
+        .dashboard-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            display: none;
+        }
+
+        .dashboard-page.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-title h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .dashboard-title p {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ff9999;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        .dashboard-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* =====================
+           EDIT STATS FORM
+           ===================== */
+        .edit-stats-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .edit-stats-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #00ffcc;
+        }
+
+        .edit-stats-section .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        /* =====================
+           MANAGE BANNER IMAGE
+           ===================== */
+        .edit-banner-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .edit-banner-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #ff9999;
+        }
+
+        .edit-banner-section .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .banner-preview {
+            max-height: 200px;
+            border: 1px solid rgba(0, 102, 204, 0.3);
+        }
+
+        /* =====================
+           MANAGE SERVICE IMAGES
+           ===================== */
+        .edit-services-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .edit-services-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #00ffcc;
+        }
+
+        .services-images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .service-image-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 102, 204, 0.3);
+        }
+
+        .service-image-item label {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: #e0e0e0;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .service-image-item input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-bottom: 0.75rem;
+        }
+
+        .service-image-item input:focus {
+            outline: none;
+            border-color: #00ffcc;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .service-image-preview {
+            width: 100%;
+            height: 150px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid rgba(0, 102, 204, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        /* =====================
+           ADD TESTIMONIAL FORM
+           ===================== */
+        .add-testimonial-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .add-testimonial-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .add-testimonial-section h2 i {
+            color: #ff6b6b;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #e0e0e0;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .rating-star {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #999;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .rating-star:hover,
+        .rating-star.active {
+            background: #ffc107;
+            color: #000;
+            border-color: #ffc107;
+            transform: scale(1.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        /* =====================
+           TESTIMONIALS LIST
+           ===================== */
+        .testimonials-list-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .testimonials-list-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .testimonials-list-section h2 i {
+            color: #ff6b6b;
+        }
+
+        .testimonials-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .testimonial-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 107, 107, 0.3);
+        }
+
+        .testimonial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.75rem;
+        }
+
+        .testimonial-info h4 {
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+        .testimonial-info p {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .testimonial-rating {
+            color: #ffc107;
+            font-size: 0.85rem;
+        }
+
+        .testimonial-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .edit-btn {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .edit-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ff9999;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        .testimonial-text {
+            color: #e0e0e0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-top: 0.75rem;
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* =====================
+           MODAL
+           ===================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #2d2d2d;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #ffffff;
+            transform: scale(1.2);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 0.875rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .cancel-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* =====================
+           SCROLLBAR
+           ===================== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 107, 107, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 107, 107, 0.7);
+        }
+
+        /* =====================
+           RESPONSIVE
+           ===================== */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .login-card {
+                padding: 2rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-page" id="loginPage">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Admin Panel</h1>
+                <p>MNYC Healthcare Management</p>
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="adminId">Admin ID</label>
+                    <input type="text" id="adminId" placeholder="Enter admin ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPass">Password</label>
+                    <input type="password" id="adminPass" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div class="dashboard-page" id="dashboardPage">
+        <div class="dashboard-header">
+            <div class="dashboard-title">
+                <h1>Testimonials Manager</h1>
+                <p>Manage and edit client testimonials</p>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="dashboard-grid">
+                <!-- Manage Homepage Banner -->
+                <div class="edit-banner-section">
+                    <h2><i class="fas fa-image"></i> Homepage Banner Image</h2>
+                    <form id="bannerForm" onsubmit="handleUpdateBanner(event)">
+                        <div class="form-group">
+                            <label for="bannerImage">Banner Image URL</label>
+                            <input 
+                                type="text" 
+                                id="bannerImage" 
+                                placeholder="Paste banner image URL here..."
+                                onchange="previewBannerImage()"
+                            >
+                        </div>
+                        <img class="banner-preview" id="bannerPreview" src="" alt="Banner Preview" style="display: none; max-width: 100%; border-radius: 8px; margin-bottom: 1rem;">
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Save Banner Image
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Edit Stats Section -->
+                <div class="edit-stats-section">
+                    <h2><i class="fas fa-chart-bar"></i> Edit Statistics</h2>
+                    <form id="statsForm" onsubmit="handleUpdateStats(event)">
+                        <div class="form-group">
+                            <label for="clientsCount">Satisfied Clients</label>
+                            <input type="number" id="clientsCount" placeholder="e.g., 500" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="yearsExperience">Years Experience</label>
+                            <input type="number" id="yearsExperience" placeholder="e.g., 10" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="transactionsCount">Transactions Processed (in Millions)</label>
+                            <input type="number" id="transactionsCount" placeholder="e.g., 100" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="uptimePercent">Uptime Guarantee (%)</label>
+                            <input type="number" id="uptimePercent" placeholder="e.g., 99" min="0" max="100" required>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Update Statistics
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Manage Service Images -->
+                <div class="edit-services-section">
+                    <h2><i class="fas fa-images"></i> Manage Service Images</h2>
+                    <form id="servicesImagesForm" onsubmit="handleUpdateServiceImages(event)">
+                        <div class="services-images-grid" id="servicesImagesGrid"></div>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Save All Images
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Add Testimonial Form -->
+                <div class="add-testimonial-section">
+                    <h2><i class="fas fa-plus-circle"></i> Add Testimonial</h2>
+                    <form id="testimonialForm" onsubmit="handleAddTestimonial(event)">
+                        <div class="form-group">
+                            <label for="clientName">Client Name *</label>
+                            <input type="text" id="clientName" placeholder="e.g., Dr. Sarah Johnson" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="clientRole">Position/Role *</label>
+                            <input type="text" id="clientRole" placeholder="e.g., Healthcare Director" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Rating *</label>
+                            <div class="rating-input" id="ratingInput">
+                                <div class="rating-star" data-rating="1"><i class="fas fa-star"></i></div>
+                                <div class="rating-star" data-rating="2"><i class="fas fa-star"></i></div>
+                                <div class="rating-star" data-rating="3"><i class="fas fa-star"></i></div>
+                                <div class="rating-star" data-rating="4"><i class="fas fa-star"></i></div>
+                                <div class="rating-star" data-rating="5"><i class="fas fa-star"></i></div>
+                            </div>
+                            <input type="hidden" id="rating" value="5">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="testimonialText">Testimonial Text *</label>
+                            <textarea id="testimonialText" placeholder="Enter the testimonial message..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-plus"></i> Add Testimonial
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Testimonials List -->
+                <div class="testimonials-list-section">
+                    <h2><i class="fas fa-list"></i> Existing Testimonials</h2>
+                    <div class="testimonials-list" id="testimonialsList">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No testimonials yet. Add your first one!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Testimonial</h2>
+                <button class="modal-close" onclick="closeEditModal()">×</button>
+            </div>
+            <form id="editForm" onsubmit="handleSaveEdit(event)">
+                <div class="form-group">
+                    <label for="editClientName">Client Name *</label>
+                    <input type="text" id="editClientName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editClientRole">Position/Role *</label>
+                    <input type="text" id="editClientRole" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Rating *</label>
+                    <div class="rating-input" id="editRatingInput">
+                        <div class="rating-star" data-rating="1"><i class="fas fa-star"></i></div>
+                        <div class="rating-star" data-rating="2"><i class="fas fa-star"></i></div>
+                        <div class="rating-star" data-rating="3"><i class="fas fa-star"></i></div>
+                        <div class="rating-star" data-rating="4"><i class="fas fa-star"></i></div>
+                        <div class="rating-star" data-rating="5"><i class="fas fa-star"></i></div>
+                    </div>
+                    <input type="hidden" id="editRating" value="5">
+                </div>
+
+                <div class="form-group">
+                    <label for="editTestimonialText">Testimonial Text *</label>
+                    <textarea id="editTestimonialText" required></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Constants
+        const CORRECT_ID = 'master.mnyc';
+        const CORRECT_PASSWORD = 'Shubh@0924';
+        const STORAGE_KEY = 'mnycTestimonials';
+
+        let currentEditId = null;
+        let isAuthenticated = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkHashAndRoute();
+            initializeRatingInputs();
+            loadTestimonials();
+            
+            window.addEventListener('hashchange', checkHashAndRoute);
+        });
+
+        // Check hash and route
+        function checkHashAndRoute() {
+            if (window.location.hash === '#admin') {
+                document.querySelector('.admin-container').classList.add('active');
+                if (!isAuthenticated) {
+                    showLoginPage();
+                } else {
+                    showDashboard();
+                }
+            } else {
+                document.querySelector('.admin-container').classList.remove('active');
+            }
+        }
+
+        // Show login page
+        function showLoginPage() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashboardPage').classList.remove('active');
+            isAuthenticated = false;
+        }
+
+        // Show dashboard
+        function showDashboard() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboardPage').classList.add('active');
+            loadBannerForm();
+            loadStats();
+            loadServiceImagesForm();
+            loadTestimonials();
+        }
+
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const adminId = document.getElementById('adminId').value.trim();
+            const adminPass = document.getElementById('adminPass').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (adminId === CORRECT_ID && adminPass === CORRECT_PASSWORD) {
+                errorMessage.classList.remove('show');
+                isAuthenticated = true;
+                localStorage.setItem('mnycAdminAuth', 'true');
+                document.getElementById('loginForm').reset();
+                showDashboard();
+            } else {
+                errorMessage.textContent = 'Invalid Admin ID or Password';
+                errorMessage.classList.add('show');
+            }
+        }
+
+        // Handle logout
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                isAuthenticated = false;
+                localStorage.removeItem('mnycAdminAuth');
+                window.location.hash = '';
+            }
+        }
+
+        // Initialize rating inputs
+        function initializeRatingInputs() {
+            // For add form
+            const ratingStars = document.querySelectorAll('#ratingInput .rating-star');
+            ratingStars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = this.dataset.rating;
+                    document.getElementById('rating').value = rating;
+                    
+                    ratingStars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+            // Set default 5 stars
+            ratingStars.forEach((s, index) => {
+                if (index < 5) {
+                    s.classList.add('active');
+                }
+            });
+
+            // For edit form
+            const editRatingStars = document.querySelectorAll('#editRatingInput .rating-star');
+            editRatingStars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = this.dataset.rating;
+                    document.getElementById('editRating').value = rating;
+                    
+                    editRatingStars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+            });
+        }
+
+        // Handle update stats
+        function handleUpdateStats(event) {
+            event.preventDefault();
+
+            const stats = {
+                clients: parseInt(document.getElementById('clientsCount').value),
+                years: parseInt(document.getElementById('yearsExperience').value),
+                transactions: parseInt(document.getElementById('transactionsCount').value),
+                uptime: parseInt(document.getElementById('uptimePercent').value)
+            };
+
+            // Save to localStorage
+            localStorage.setItem('mnycStats', JSON.stringify(stats));
+
+            // Show success notification
+            showNotification('Statistics updated successfully!', 'success');
+
+            // Reload stats on main page if open
+            if (window.parent !== window) {
+                window.parent.location.reload();
+            }
+        }
+
+        // Load banner image on admin panel load
+        function loadBannerForm() {
+            const bannerImage = localStorage.getItem('mnycBannerImage');
+            const input = document.getElementById('bannerImage');
+            const preview = document.getElementById('bannerPreview');
+
+            if (bannerImage) {
+                input.value = bannerImage;
+                preview.src = bannerImage;
+                preview.style.display = 'block';
+            }
+        }
+
+        // Preview banner image
+        function previewBannerImage() {
+            const input = document.getElementById('bannerImage');
+            const preview = document.getElementById('bannerPreview');
+            
+            if (input.value) {
+                preview.src = input.value;
+                preview.style.display = 'block';
+                preview.onerror = function() {
+                    showNotification('Invalid image URL. Please check the link.', 'error');
+                };
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        // Handle update banner image
+        function handleUpdateBanner(event) {
+            event.preventDefault();
+
+            const bannerImage = document.getElementById('bannerImage').value;
+
+            if (!bannerImage) {
+                showNotification('Please enter an image URL', 'error');
+                return;
+            }
+
+            // Save to localStorage
+            localStorage.setItem('mnycBannerImage', bannerImage);
+
+            // Show success notification
+            showNotification('Banner image updated successfully!', 'success');
+
+            // Reload main page if open
+            if (window.parent !== window) {
+                window.parent.location.reload();
+            }
+        }
+
+        // Load stats on admin panel load
+        function loadStats() {
+            const stats = JSON.parse(localStorage.getItem('mnycStats')) || {
+                clients: 500,
+                years: 10,
+                transactions: 100,
+                uptime: 99
+            };
+
+            document.getElementById('clientsCount').value = stats.clients;
+            document.getElementById('yearsExperience').value = stats.years;
+            document.getElementById('transactionsCount').value = stats.transactions;
+            document.getElementById('uptimePercent').value = stats.uptime;
+        }
+
+        // Service images default data
+        const defaultServiceImages = [
+            { id: 1, title: "Credentialing & Contracting" },
+            { id: 2, title: "Eligibility & Benefits Verification" },
+            { id: 3, title: "Medical Coding" },
+            { id: 4, title: "Demo & Charge Entry" },
+            { id: 5, title: "Payment & Credit Analysis" },
+            { id: 6, title: "AR & Appeals Management" }
+        ];
+
+        // Load service images form
+        function loadServiceImagesForm() {
+            const grid = document.getElementById('servicesImagesGrid');
+            const storedImages = JSON.parse(localStorage.getItem('mnycServiceImages')) || {};
+
+            grid.innerHTML = defaultServiceImages.map(service => `
+                <div class="service-image-item">
+                    <label for="serviceImage${service.id}">${service.title}</label>
+                    <input 
+                        type="text" 
+                        id="serviceImage${service.id}" 
+                        placeholder="Paste image URL here..."
+                        value="${storedImages[service.id] || ''}"
+                        onchange="previewServiceImage(${service.id})"
+                    >
+                    <img class="service-image-preview" id="preview${service.id}" src="${storedImages[service.id] || ''}" alt="${service.title}" style="display: ${storedImages[service.id] ? 'block' : 'none'};">
+                </div>
+            `).join('');
+        }
+
+        // Preview service image
+        function previewServiceImage(serviceId) {
+            const input = document.getElementById(`serviceImage${serviceId}`);
+            const preview = document.getElementById(`preview${serviceId}`);
+            
+            if (input.value) {
+                preview.src = input.value;
+                preview.style.display = 'block';
+                preview.onerror = function() {
+                    showNotification('Invalid image URL. Please check the link.', 'error');
+                };
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        // Handle update service images
+        function handleUpdateServiceImages(event) {
+            event.preventDefault();
+
+            const images = {};
+            defaultServiceImages.forEach(service => {
+                const input = document.getElementById(`serviceImage${service.id}`);
+                if (input.value) {
+                    images[service.id] = input.value;
+                }
+            });
+
+            // Save to localStorage
+            localStorage.setItem('mnycServiceImages', JSON.stringify(images));
+
+            // Show success notification
+            showNotification('Service images updated successfully!', 'success');
+
+            // Reload services on main page if open
+            if (window.parent !== window) {
+                window.parent.location.reload();
+            }
+        }
+
+        // Handle add testimonial
+        function handleAddTestimonial(event) {
+            event.preventDefault();
+
+            const testimonial = {
+                id: Date.now(),
+                name: document.getElementById('clientName').value,
+                role: document.getElementById('clientRole').value,
+                rating: parseInt(document.getElementById('rating').value),
+                text: document.getElementById('testimonialText').value
+            };
+
+            // Save to localStorage
+            let testimonials = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            testimonials.push(testimonial);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(testimonials));
+
+            // Reset form
+            document.getElementById('testimonialForm').reset();
+            document.getElementById('rating').value = '5';
+            document.querySelectorAll('#ratingInput .rating-star').forEach((s, index) => {
+                if (index < 5) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+
+            // Reload list
+            loadTestimonials();
+
+            // Show success notification
+            showNotification('Testimonial added successfully!', 'success');
+        }
+
+        // Load testimonials
+        function loadTestimonials() {
+            const testimonials = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            const listContainer = document.getElementById('testimonialsList');
+
+            if (testimonials.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No testimonials yet. Add your first one!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listContainer.innerHTML = testimonials.map(testimonial => `
+                <div class="testimonial-item">
+                    <div class="testimonial-header">
+                        <div class="testimonial-info">
+                            <h4>${testimonial.name}</h4>
+                            <p>${testimonial.role}</p>
+                            <div class="testimonial-rating">
+                                ${'⭐'.repeat(testimonial.rating)} (${testimonial.rating}/5)
+                            </div>
+                        </div>
+                        <div class="testimonial-actions">
+                            <button class="action-btn edit-btn" onclick="openEditModal(${testimonial.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="action-btn delete-btn" onclick="deleteTestimonial(${testimonial.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    <p class="testimonial-text">"${testimonial.text}"</p>
+                </div>
+            `).join('');
+        }
+
+        // Open edit modal
+        function openEditModal(id) {
+            const testimonials = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            const testimonial = testimonials.find(t => t.id === id);
+
+            if (!testimonial) return;
+
+            currentEditId = id;
+            document.getElementById('editClientName').value = testimonial.name;
+            document.getElementById('editClientRole').value = testimonial.role;
+            document.getElementById('editRating').value = testimonial.rating;
+            document.getElementById('editTestimonialText').value = testimonial.text;
+
+            // Set stars
+            document.querySelectorAll('#editRatingInput .rating-star').forEach((s, index) => {
+                if (index < testimonial.rating) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+            currentEditId = null;
+        }
+
+        // Handle save edit
+        function handleSaveEdit(event) {
+            event.preventDefault();
+
+            const testimonials = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            const index = testimonials.findIndex(t => t.id === currentEditId);
+
+            if (index !== -1) {
+                testimonials[index] = {
+                    id: currentEditId,
+                    name: document.getElementById('editClientName').value,
+                    role: document.getElementById('editClientRole').value,
+                    rating: parseInt(document.getElementById('editRating').value),
+                    text: document.getElementById('editTestimonialText').value
+                };
+
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(testimonials));
+                loadTestimonials();
+                closeEditModal();
+                showNotification('Testimonial updated successfully!', 'success');
+            }
+        }
+
+        // Delete testimonial
+        function deleteTestimonial(id) {
+            if (!confirm('Are you sure you want to delete this testimonial?')) return;
+
+            let testimonials = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            testimonials = testimonials.filter(t => t.id !== id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(testimonials));
+
+            loadTestimonials();
+            showNotification('Testimonial deleted successfully!', 'success');
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            // You can enhance this with a notification element
+            console.log(type.toUpperCase() + ': ' + message);
+        }
+
+        // Check if already authenticated on page load
+        window.addEventListener('load', function() {
+            if (localStorage.getItem('mnycAdminAuth') === 'true' && window.location.hash === '#admin') {
+                isAuthenticated = true;
+                showDashboard();
+            }
+        });
+    </script>
+
+    <style>
+        .admin-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+        }
+    </style>
+</body>
+</html>
