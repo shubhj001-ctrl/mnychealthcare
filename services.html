@@ -6,6 +6,9 @@
     <title>Our Services - MNYC Healthcare</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     <style>
         /* Services Page Specific Styles */
         .services-hero {
@@ -478,16 +481,59 @@
         ];
 
         // Render Services Grid
-        function renderServices() {
-            // Load custom images from localStorage if available
-            const customImages = JSON.parse(localStorage.getItem('mnycServiceImages')) || {};
-            
-            const grid = document.getElementById('servicesGrid');
-            grid.innerHTML = services.map(service => {
-                const imageUrl = customImages[service.id] || service.image;
-                return `
+        async function renderServices() {
+            try {
+                // Initialize Firebase
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCL7lKu2YPbF00X-wI0U83U5vYF4OUVuTE",
+                    authDomain: "mnychealthcare.firebaseapp.com",
+                    projectId: "mnychealthcare",
+                    storageBucket: "mnychealthcare.firebasestorage.app",
+                    messagingSenderId: "1039065732246",
+                    appId: "1:1039065732246:web:fee9e8397aa2d1271b9eb7",
+                    measurementId: "G-1Q29VB9BB3"
+                };
+
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+
+                const db = firebase.firestore();
+
+                // Load custom images from Firestore
+                let customImages = {};
+                try {
+                    const docSnap = await db.collection('website').doc('serviceImages').get();
+                    if (docSnap.exists) {
+                        customImages = docSnap.data().images || {};
+                    }
+                } catch (error) {
+                    console.error('Error loading service images:', error);
+                }
+                
+                const grid = document.getElementById('servicesGrid');
+                grid.innerHTML = services.map(service => {
+                    const imageUrl = customImages[service.id] || service.image;
+                    return `
+                        <div class="service-card" onclick="openServiceModal(${service.id})">
+                            <img src="${imageUrl}" alt="${service.title}" class="service-card-image" onerror="this.src='${service.image}'">
+                            <div class="service-card-overlay">
+                                <div class="service-card-icon">
+                                    <i class="${service.icon}"></i>
+                                </div>
+                                <h3 class="service-card-title">${service.title}</h3>
+                                <p class="service-card-subtitle">${service.shortDesc}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error rendering services:', error);
+                // Fallback to default rendering
+                const grid = document.getElementById('servicesGrid');
+                grid.innerHTML = services.map(service => `
                     <div class="service-card" onclick="openServiceModal(${service.id})">
-                        <img src="${imageUrl}" alt="${service.title}" class="service-card-image" onerror="this.src='${service.image}'">
+                        <img src="${service.image}" alt="${service.title}" class="service-card-image">
                         <div class="service-card-overlay">
                             <div class="service-card-icon">
                                 <i class="${service.icon}"></i>
@@ -496,8 +542,8 @@
                             <p class="service-card-subtitle">${service.shortDesc}</p>
                         </div>
                     </div>
-                `;
-            }).join('');
+                `).join('');
+            }
         }
 
         // Open Service Modal

@@ -200,21 +200,40 @@ if (contactForm) {
 // =====================
 // Counter Animation
 // =====================
-const loadStatsFromStorage = () => {
-    const stats = JSON.parse(localStorage.getItem('mnycStats')) || {
-        clients: 500,
-        years: 10,
-        transactions: 100,
-        uptime: 99
-    };
+const loadStatsFromStorage = async () => {
+    try {
+        const db = firebase.firestore();
+        const docSnap = await db.collection('website').doc('stats').get();
+        
+        let stats = {
+            clients: 520,
+            years: 10,
+            transactions: 2567,
+            uptime: 99
+        };
+        
+        if (docSnap.exists) {
+            stats = { ...stats, ...docSnap.data() };
+        }
 
-    // Update data-target attributes
-    const counters = document.querySelectorAll('.stat-number');
-    if (counters.length >= 4) {
-        counters[0].setAttribute('data-target', stats.clients);
-        counters[1].setAttribute('data-target', stats.years);
-        counters[2].setAttribute('data-target', stats.transactions);
-        counters[3].setAttribute('data-target', stats.uptime);
+        // Update data-target attributes
+        const counters = document.querySelectorAll('.stat-number');
+        if (counters.length >= 4) {
+            counters[0].setAttribute('data-target', stats.clients);
+            counters[1].setAttribute('data-target', stats.years);
+            counters[2].setAttribute('data-target', stats.transactions);
+            counters[3].setAttribute('data-target', stats.uptime);
+        }
+    } catch (error) {
+        console.error('Error loading stats:', error);
+        // Fallback to defaults
+        const counters = document.querySelectorAll('.stat-number');
+        if (counters.length >= 4) {
+            counters[0].setAttribute('data-target', 520);
+            counters[1].setAttribute('data-target', 10);
+            counters[2].setAttribute('data-target', 2567);
+            counters[3].setAttribute('data-target', 99);
+        }
     }
 };
 
@@ -370,54 +389,80 @@ window.addEventListener('scroll', () => {
 // =====================
 // Homepage Banner Image
 // =====================
-function loadBannerImage() {
-    const bannerImage = localStorage.getItem('mnycBannerImage');
+async function loadBannerImage() {
     const heroSection = document.querySelector('.hero');
+    if (!heroSection) return;
     
-    if (heroSection) {
-        // Use stored image if available, otherwise use default
-        const imageUrl = bannerImage || 'https://loremflickr.com/1200/600/healthcare';
+    try {
+        // Get Firebase reference
+        const db = firebase.firestore();
+        const docSnap = await db.collection('website').doc('banner').get();
+        let imageUrl = 'https://loremflickr.com/1200/600/healthcare'; // Default
+        
+        if (docSnap.exists) {
+            imageUrl = docSnap.data().imageUrl || imageUrl;
+        }
+        
         heroSection.style.backgroundImage = `url('${imageUrl}')`;
+    } catch (error) {
+        console.error('Error loading banner:', error);
+        // Fallback to default
+        heroSection.style.backgroundImage = `url('https://loremflickr.com/1200/600/healthcare')`;
     }
 }
 
 // =====================
 const testimonialTrack = document.querySelector('.testimonials-track');
 
-// Load testimonials from localStorage
-function loadTestimonialsFromStorage() {
-    const STORAGE_KEY = 'mnycTestimonials';
-    const testimonials = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+// Load testimonials from Firestore
+async function loadTestimonialsFromStorage() {
+    const testimonialTrack = document.querySelector('.testimonials-track');
+    if (!testimonialTrack) return;
     
-    if (testimonials.length > 0 && testimonialTrack) {
-        // Clear existing testimonials
-        testimonialTrack.innerHTML = '';
+    try {
+        const db = firebase.firestore();
+        const querySnapshot = await db.collection('testimonials').get();
+        const testimonials = [];
         
-        // Add testimonials from storage
-        testimonials.forEach(testimonial => {
-            const stars = '⭐'.repeat(testimonial.rating);
-            const card = document.createElement('div');
-            card.className = 'testimonial-card';
-            card.innerHTML = `
-                <div class="testimonial-header">
-                    <div class="testimonial-avatar">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                    <div class="testimonial-info">
-                        <h4>${testimonial.name}</h4>
-                        <p>${testimonial.role}</p>
-                    </div>
-                </div>
-                <div class="testimonial-rating">
-                    ${stars}
-                </div>
-                <p class="testimonial-text">"${testimonial.text}"</p>
-            `;
-            testimonialTrack.appendChild(card);
+        querySnapshot.forEach((doc) => {
+            testimonials.push({
+                id: doc.id,
+                ...doc.data()
+            });
         });
         
-        // Re-attach navigation listeners after testimonials are loaded
-        attachTestimonialNavigation();
+        if (testimonials.length > 0) {
+            // Clear existing testimonials
+            testimonialTrack.innerHTML = '';
+            
+            // Add testimonials from Firestore
+            testimonials.forEach(testimonial => {
+                const stars = '⭐'.repeat(testimonial.rating);
+                const card = document.createElement('div');
+                card.className = 'testimonial-card';
+                card.innerHTML = `
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="testimonial-info">
+                            <h4>${testimonial.name}</h4>
+                            <p>${testimonial.role}</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-rating">
+                        ${stars}
+                    </div>
+                    <p class="testimonial-text">"${testimonial.text}"</p>
+                `;
+                testimonialTrack.appendChild(card);
+            });
+            
+            // Re-attach navigation listeners after testimonials are loaded
+            attachTestimonialNavigation();
+        }
+    } catch (error) {
+        console.error('Error loading testimonials:', error);
     }
 }
 
