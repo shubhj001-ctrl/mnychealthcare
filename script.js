@@ -1,4 +1,21 @@
 // =====================
+// Firebase Initialization
+// =====================
+const firebaseConfig = {
+    apiKey: "AIzaSyCL7lKu2YPbF00X-wI0U83U5vYF4OUVuTE",
+    authDomain: "mnychealthcare.firebaseapp.com",
+    projectId: "mnychealthcare",
+    storageBucket: "mnychealthcare.firebasestorage.app",
+    messagingSenderId: "1039065732246",
+    appId: "1:1039065732246:web:fee9e8397aa2d1271b9eb7",
+    measurementId: "G-1Q29VB9BB3"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+// =====================
 // DOM Elements
 // =====================
 const hamburger = document.querySelector('.hamburger');
@@ -394,16 +411,21 @@ async function loadBannerImage() {
     if (!heroSection) return;
     
     try {
-        // Get Firebase reference
+        // Wait for Firebase to be ready
         const db = firebase.firestore();
         const docSnap = await db.collection('website').doc('banner').get();
         let imageUrl = 'https://loremflickr.com/1200/600/healthcare'; // Default
         
-        if (docSnap.exists) {
-            imageUrl = docSnap.data().imageUrl || imageUrl;
+        if (docSnap.exists && docSnap.data().imageUrl) {
+            imageUrl = docSnap.data().imageUrl;
+            console.log('Loaded banner image from Firebase:', imageUrl);
+        } else {
+            console.log('No banner image in Firebase, using default');
         }
         
         heroSection.style.backgroundImage = `url('${imageUrl}')`;
+        heroSection.style.backgroundSize = 'cover';
+        heroSection.style.backgroundPosition = 'center';
     } catch (error) {
         console.error('Error loading banner:', error);
         // Fallback to default
@@ -526,9 +548,9 @@ function attachTestimonialNavigation() {
 }
 
 // Load testimonials on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // Load banner image
-    loadBannerImage();
+document.addEventListener('DOMContentLoaded', async function() {
+    // Load banner image - wait for it to complete
+    await loadBannerImage();
     
     // Small delay to ensure DOM is fully ready
     setTimeout(function() {
