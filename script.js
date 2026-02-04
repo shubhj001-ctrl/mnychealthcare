@@ -36,25 +36,55 @@ const updateStatDisplay = (clients, years, transactions, uptime) => {
     }
 };
 
-// Set up real-time listener for stats updates
-db.collection('website').doc('stats').onSnapshot((doc) => {
-    if (doc.exists) {
-        const stats = doc.data();
-        console.log('📊 Real-time update: Firestore stats received:', stats);
-        updateStatDisplay(
-            stats.clients || 500,
-            stats.years || 15,
-            stats.transactions || 50,
-            stats.uptime || 99
-        );
-    } else {
-        console.log('ℹ️ Stats document does not exist in Firestore yet. Using defaults.');
-        console.log('💡 Once you save stats from admin, they will appear here.');
-        // Only update if we're sure no data exists
-        // updateStatDisplay(500, 15, 50, 99);
+// Load stats from Firestore on page load (initial load)
+const loadStatsFromFirestore = async () => {
+    try {
+        console.log('📂 Loading stats from Firestore on page load...');
+        const docSnap = await db.collection('website').doc('stats').get();
+        
+        if (docSnap.exists) {
+            const stats = docSnap.data();
+            console.log('✅ Stats loaded from Firestore:', stats);
+            updateStatDisplay(
+                stats.clients || 500,
+                stats.years || 15,
+                stats.transactions || 50,
+                stats.uptime || 99
+            );
+        } else {
+            console.log('ℹ️ No stats in Firestore yet. Using defaults.');
+            updateStatDisplay(500, 15, 50, 99);
+        }
+    } catch (error) {
+        console.error('❌ Error loading stats from Firestore:', error);
+        updateStatDisplay(500, 15, 50, 99);
     }
-}, (error) => {
-    console.error('❌ Error listening to stats:', error);
+};
+
+// Set up real-time listener for stats updates (after initial load)
+const setupStatsListener = () => {
+    db.collection('website').doc('stats').onSnapshot((doc) => {
+        if (doc.exists) {
+            const stats = doc.data();
+            console.log('📊 Real-time update from Firestore:', stats);
+            updateStatDisplay(
+                stats.clients || 500,
+                stats.years || 15,
+                stats.transactions || 50,
+                stats.uptime || 99
+            );
+        }
+    }, (error) => {
+        console.error('❌ Error in stats listener:', error);
+    });
+};
+
+// Load stats when DOM is ready
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🔄 Page loaded - initializing stats...');
+    await loadStatsFromFirestore();
+    setupStatsListener();
+});
     // Fallback to defaults on error
     updateStatDisplay(500, 15, 50, 99);
 });
