@@ -16,6 +16,37 @@ if (!firebase.apps.length) {
 }
 
 // =====================
+// Real-Time Stats Listener
+// =====================
+const db = firebase.firestore();
+
+// Set up real-time listener for stats updates
+db.collection('website').doc('stats').onSnapshot((doc) => {
+    if (doc.exists) {
+        const stats = doc.data();
+        const counters = document.querySelectorAll('.stat-number');
+        
+        if (counters.length >= 4) {
+            // Update all stat numbers with new values
+            counters[0].setAttribute('data-target', stats.clients || 500);
+            counters[1].setAttribute('data-target', stats.years || 15);
+            counters[2].setAttribute('data-target', stats.transactions || 50);
+            counters[3].setAttribute('data-target', stats.uptime || 99);
+            
+            // Immediately display the new values (no animation delay)
+            counters[0].textContent = stats.clients || 500;
+            counters[1].textContent = stats.years || 15;
+            counters[2].textContent = stats.transactions || 50;
+            counters[3].textContent = stats.uptime || 99;
+            
+            console.log('✅ Stats updated in real-time:', stats);
+        }
+    }
+}, (error) => {
+    console.error('Error listening to stats:', error);
+});
+
+// =====================
 // DOM Elements
 // =====================
 const hamburger = document.querySelector('.hamburger');
@@ -697,11 +728,19 @@ const handleUpdateStats = async (event) => {
         
         console.log('Stats saved to Firestore:', statsData);
         
-        // Reload stats immediately on the page
-        await loadStatsFromStorage();
-        
-        // Trigger animation
-        animateCounters();
+        // Immediately update all stat numbers on the page
+        const counters = document.querySelectorAll('.stat-number');
+        if (counters.length >= 4) {
+            counters[0].textContent = clientsCount;
+            counters[1].textContent = yearsExperience;
+            counters[2].textContent = transactionsCount;
+            counters[3].textContent = uptimePercent;
+            
+            counters[0].setAttribute('data-target', clientsCount);
+            counters[1].setAttribute('data-target', yearsExperience);
+            counters[2].setAttribute('data-target', transactionsCount);
+            counters[3].setAttribute('data-target', uptimePercent);
+        }
         
         // Reset form
         document.getElementById('statsForm').reset();
@@ -709,7 +748,13 @@ const handleUpdateStats = async (event) => {
         // Show success message
         showNotification('✅ Statistics updated successfully! Changes are live.', 'success');
         
-        console.log('Stats updated and reloaded:', statsData);
+        console.log('Stats updated and displayed:', statsData);
+        
+        // Optionally refresh the entire page after 2 seconds to ensure full sync
+        setTimeout(() => {
+            location.reload();
+        }, 2000);
+        
     } catch (error) {
         console.error('Error updating statistics:', error);
         showNotification('❌ Error updating statistics. Please try again.', 'error');
