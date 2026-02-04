@@ -1009,7 +1009,10 @@
 
         <!-- Dashboard Navigation Tabs -->
         <div class="dashboard-tabs">
-            <button class="tab-btn active" onclick="switchTab('testimonials')">
+            <button class="tab-btn active" onclick="switchTab('statistics')">
+                <i class="fas fa-chart-bar"></i> Statistics
+            </button>
+            <button class="tab-btn" onclick="switchTab('testimonials')">
                 <i class="fas fa-comments"></i> Testimonials
             </button>
             <button class="tab-btn" onclick="switchTab('campaigns')">
@@ -1024,8 +1027,42 @@
         </div>
 
         <div class="dashboard-content">
+            <!-- Statistics Tab -->
+            <div id="statistics" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="edit-stats-section">
+                    <h2><i class="fas fa-chart-bar"></i> Edit Website Statistics</h2>
+                    <form id="statsForm" onsubmit="handleUpdateStats(event)">
+                        <div class="form-group">
+                            <label for="clientsCount">Satisfied Clients</label>
+                            <input type="number" id="clientsCount" placeholder="e.g., 500" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="yearsExperience">Years Experience</label>
+                            <input type="number" id="yearsExperience" placeholder="e.g., 15" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="transactionsCount">Transactions Processed (in Millions)</label>
+                            <input type="number" id="transactionsCount" placeholder="e.g., 50" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="uptimePercent">Uptime Guarantee (%)</label>
+                            <input type="number" id="uptimePercent" placeholder="e.g., 99" min="0" max="100" required>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Update Statistics
+                        </button>
+                    </form>
+                </div>
+            </div>
+            </div> <!-- End statistics tab -->
+
             <!-- Testimonials Tab -->
-            <div id="testimonials" class="tab-content active">
+            <div id="testimonials" class="tab-content">
             <div class="dashboard-grid">
                 <!-- Manage Homepage Banner -->
                 <div class="edit-banner-section">
@@ -1043,36 +1080,6 @@
                         <img class="banner-preview" id="bannerPreview" src="" alt="Banner Preview" style="display: none; max-width: 100%; border-radius: 8px; margin-bottom: 1rem;">
                         <button type="submit" class="submit-btn">
                             <i class="fas fa-save"></i> Save Banner Image
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Edit Stats Section -->
-                <div class="edit-stats-section">
-                    <h2><i class="fas fa-chart-bar"></i> Edit Statistics</h2>
-                    <form id="statsForm" onsubmit="handleUpdateStats(event)">
-                        <div class="form-group">
-                            <label for="clientsCount">Satisfied Clients</label>
-                            <input type="number" id="clientsCount" placeholder="e.g., 500" min="0" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="yearsExperience">Years Experience</label>
-                            <input type="number" id="yearsExperience" placeholder="e.g., 10" min="0" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="transactionsCount">Transactions Processed (in Millions)</label>
-                            <input type="number" id="transactionsCount" placeholder="e.g., 100" min="0" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="uptimePercent">Uptime Guarantee (%)</label>
-                            <input type="number" id="uptimePercent" placeholder="e.g., 99" min="0" max="100" required>
-                        </div>
-
-                        <button type="submit" class="submit-btn">
-                            <i class="fas fa-save"></i> Update Statistics
                         </button>
                     </form>
                 </div>
@@ -1315,15 +1322,18 @@
 
         // Check hash and route
         function checkHashAndRoute() {
+            const adminContainer = document.querySelector('.admin-container');
+            if (!adminContainer) return;
+            
             if (window.location.hash === '#admin') {
-                document.querySelector('.admin-container').classList.add('active');
+                adminContainer.classList.add('active');
                 if (!isAuthenticated) {
                     showLoginPage();
                 } else {
                     showDashboard();
                 }
             } else {
-                document.querySelector('.admin-container').classList.remove('active');
+                adminContainer.classList.remove('active');
             }
         }
 
@@ -1919,14 +1929,27 @@
             try {
                 const snapshot = await db.collection('formSubmissions').orderBy('createdAt', 'desc').limit(20).get();
                 const submissionsList = document.getElementById('submissionsList');
-                const totalSubmissions = await db.collection('formSubmissions').count().get();
-                const thisMonthSubmissions = await db.collection('formSubmissions')
-                    .where('createdAt', '>=', new Date(new Date().getFullYear(), new Date().getMonth(), 1))
-                    .count().get();
+                
+                // Get total count properly
+                const allSubmissionsSnapshot = await db.collection('formSubmissions').get();
+                const totalCount = allSubmissionsSnapshot.size;
+                
+                // Get this month count
+                const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+                const thisMonthSnapshot = await db.collection('formSubmissions')
+                    .where('createdAt', '>=', firstDay)
+                    .get();
+                const thisMonthCount = thisMonthSnapshot.size;
 
-                document.getElementById('totalSubmissions').textContent = totalSubmissions.data().count;
-                document.getElementById('thisMonthSubmissions').textContent = thisMonthSubmissions.data().count;
-                document.getElementById('responseRate').textContent = totalSubmissions.data().count > 0 ? '85%' : '0%';
+                if (document.getElementById('totalSubmissions')) {
+                    document.getElementById('totalSubmissions').textContent = totalCount;
+                }
+                if (document.getElementById('thisMonthSubmissions')) {
+                    document.getElementById('thisMonthSubmissions').textContent = thisMonthCount;
+                }
+                if (document.getElementById('responseRate')) {
+                    document.getElementById('responseRate').textContent = totalCount > 0 ? '85%' : '0%';
+                }
 
                 if (snapshot.empty) {
                     submissionsList.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>No submissions yet</p></div>`;

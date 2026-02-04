@@ -695,25 +695,24 @@ const handleUpdateStats = async (event) => {
         // Save to Firestore
         await db.collection('website').doc('stats').set(statsData, { merge: true });
         
-        // Update display immediately
-        const counters = document.querySelectorAll('.stat-number');
-        if (counters.length >= 4) {
-            counters[0].setAttribute('data-target', clientsCount);
-            counters[1].setAttribute('data-target', yearsExperience);
-            counters[2].setAttribute('data-target', transactionsCount);
-            counters[3].setAttribute('data-target', uptimePercent);
-        }
+        console.log('Stats saved to Firestore:', statsData);
+        
+        // Reload stats immediately on the page
+        await loadStatsFromStorage();
+        
+        // Trigger animation
+        animateCounters();
         
         // Reset form
         document.getElementById('statsForm').reset();
         
         // Show success message
-        showNotification('Statistics updated successfully! 🎉', 'success');
+        showNotification('✅ Statistics updated successfully! Changes are live.', 'success');
         
-        console.log('Stats updated:', statsData);
+        console.log('Stats updated and reloaded:', statsData);
     } catch (error) {
         console.error('Error updating statistics:', error);
-        showNotification('Error updating statistics. Please try again.', 'error');
+        showNotification('❌ Error updating statistics. Please try again.', 'error');
     }
 };
 
