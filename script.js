@@ -40,7 +40,7 @@ const updateStatDisplay = (clients, years, transactions, uptime) => {
 db.collection('website').doc('stats').onSnapshot((doc) => {
     if (doc.exists) {
         const stats = doc.data();
-        console.log('📊 Firestore stats received:', stats);
+        console.log('📊 Real-time update: Firestore stats received:', stats);
         updateStatDisplay(
             stats.clients || 500,
             stats.years || 15,
@@ -48,8 +48,10 @@ db.collection('website').doc('stats').onSnapshot((doc) => {
             stats.uptime || 99
         );
     } else {
-        console.log('ℹ️ No stats document in Firestore, using defaults');
-        updateStatDisplay(500, 15, 50, 99);
+        console.log('ℹ️ Stats document does not exist in Firestore yet. Using defaults.');
+        console.log('💡 Once you save stats from admin, they will appear here.');
+        // Only update if we're sure no data exists
+        // updateStatDisplay(500, 15, 50, 99);
     }
 }, (error) => {
     console.error('❌ Error listening to stats:', error);

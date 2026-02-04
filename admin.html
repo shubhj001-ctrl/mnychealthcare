@@ -1582,6 +1582,7 @@
         // Load stats on admin panel load
         async function loadStats() {
             try {
+                console.log('📂 Loading stats from Firestore...');
                 const docSnap = await db.collection('website').doc('stats').get();
                 
                 let stats = {
@@ -1592,15 +1593,36 @@
                 };
 
                 if (docSnap.exists) {
+                    console.log('✅ Firestore stats found:', docSnap.data());
                     stats = { ...stats, ...docSnap.data() };
+                } else {
+                    console.warn('⚠️ No stats document in Firestore yet. Using defaults.');
                 }
 
+                // Populate form with values
                 document.getElementById('clientsCount').value = stats.clients;
                 document.getElementById('yearsExperience').value = stats.years;
                 document.getElementById('transactionsCount').value = stats.transactions;
                 document.getElementById('uptimePercent').value = stats.uptime;
+                
+                console.log('📝 Form populated with values:', stats);
             } catch (error) {
-                console.error('Error loading stats:', error);
+                console.error('❌ Error loading stats:', error);
+            }
+        }
+
+        // Debug function to check what's actually saved in Firestore
+        async function debugCheckFirestoreStats() {
+            try {
+                console.log('🔍 Checking Firestore stats document...');
+                const docSnap = await db.collection('website').doc('stats').get();
+                if (docSnap.exists) {
+                    console.log('✅ Document exists with data:', docSnap.data());
+                } else {
+                    console.log('❌ Document does NOT exist in Firestore');
+                }
+            } catch (error) {
+                console.error('Error checking Firestore:', error);
             }
         }
 
