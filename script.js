@@ -85,9 +85,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadStatsFromFirestore();
     setupStatsListener();
 });
-    // Fallback to defaults on error
-    updateStatDisplay(500, 15, 50, 99);
-});
 
 // =====================
 // DOM Elements
