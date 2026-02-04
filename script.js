@@ -20,30 +20,41 @@ if (!firebase.apps.length) {
 // =====================
 const db = firebase.firestore();
 
+// Helper function to update stat display
+const updateStatDisplay = (clients, years, transactions, uptime) => {
+    const counters = document.querySelectorAll('.stat-number');
+    if (counters.length >= 4) {
+        counters[0].setAttribute('data-target', clients);
+        counters[1].setAttribute('data-target', years);
+        counters[2].setAttribute('data-target', transactions);
+        counters[3].setAttribute('data-target', uptime);
+        
+        counters[0].textContent = clients;
+        counters[1].textContent = years;
+        counters[2].textContent = transactions;
+        counters[3].textContent = uptime;
+    }
+};
+
 // Set up real-time listener for stats updates
 db.collection('website').doc('stats').onSnapshot((doc) => {
     if (doc.exists) {
         const stats = doc.data();
-        const counters = document.querySelectorAll('.stat-number');
-        
-        if (counters.length >= 4) {
-            // Update all stat numbers with new values
-            counters[0].setAttribute('data-target', stats.clients || 500);
-            counters[1].setAttribute('data-target', stats.years || 15);
-            counters[2].setAttribute('data-target', stats.transactions || 50);
-            counters[3].setAttribute('data-target', stats.uptime || 99);
-            
-            // Immediately display the new values (no animation delay)
-            counters[0].textContent = stats.clients || 500;
-            counters[1].textContent = stats.years || 15;
-            counters[2].textContent = stats.transactions || 50;
-            counters[3].textContent = stats.uptime || 99;
-            
-            console.log('✅ Stats updated in real-time:', stats);
-        }
+        console.log('📊 Firestore stats received:', stats);
+        updateStatDisplay(
+            stats.clients || 500,
+            stats.years || 15,
+            stats.transactions || 50,
+            stats.uptime || 99
+        );
+    } else {
+        console.log('ℹ️ No stats document in Firestore, using defaults');
+        updateStatDisplay(500, 15, 50, 99);
     }
 }, (error) => {
-    console.error('Error listening to stats:', error);
+    console.error('❌ Error listening to stats:', error);
+    // Fallback to defaults on error
+    updateStatDisplay(500, 15, 50, 99);
 });
 
 // =====================

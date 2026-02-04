@@ -1440,16 +1440,18 @@
                 years: parseInt(document.getElementById('yearsExperience').value),
                 transactions: parseInt(document.getElementById('transactionsCount').value),
                 uptime: parseInt(document.getElementById('uptimePercent').value),
-                updatedAt: new Date()
+                updatedAt: new Date().toISOString()
             };
 
             try {
-                // Save to Firestore
-                await db.collection('website').doc('stats').set(stats);
-                showNotification('Statistics updated successfully!', 'success');
+                console.log('Saving stats to Firestore:', stats);
+                // Save to Firestore with merge: true to keep other fields
+                await db.collection('website').doc('stats').set(stats, { merge: true });
+                console.log('✅ Stats successfully saved to Firestore!');
+                showNotification('✅ Statistics updated successfully! Changes are now live.', 'success');
             } catch (error) {
-                console.error('Error saving stats:', error);
-                showNotification('Error saving statistics', 'error');
+                console.error('❌ Error saving stats:', error);
+                showNotification('Error saving statistics: ' + error.message, 'error');
             }
         }
 
