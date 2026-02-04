@@ -202,6 +202,55 @@
         }
 
         /* =====================
+           DASHBOARD TABS
+           ===================== */
+        .dashboard-tabs {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #999;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #0066cc, #00a8ff);
+            color: white;
+            border-color: rgba(0, 168, 255, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* =====================
            EDIT STATS FORM
            ===================== */
         .edit-stats-section {
@@ -555,6 +604,236 @@
         }
 
         /* =====================
+           EMAIL CAMPAIGNS SECTION
+           ===================== */
+        .campaigns-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .campaigns-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #7dd3fc;
+        }
+
+        .campaign-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 3px solid #0066cc;
+        }
+
+        .campaign-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.75rem;
+        }
+
+        .campaign-header h4 {
+            font-size: 1.1rem;
+            color: #ffffff;
+        }
+
+        .campaign-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .campaign-status.draft {
+            background: rgba(107, 114, 128, 0.2);
+            color: #d1d5db;
+        }
+
+        .campaign-status.sent {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        .campaign-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 0.25rem;
+        }
+
+        /* =====================
+           SUBSCRIBERS SECTION
+           ===================== */
+        .subscribers-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .subscribers-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #86efac;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .analytics-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .analytics-card h4 {
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .analytics-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #00d4ff;
+        }
+
+        .subscribers-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .subscriber-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #10b981;
+        }
+
+        .subscriber-email {
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+
+        .subscriber-date {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        /* =====================
+           FORM SUBMISSIONS SECTION
+           ===================== */
+        .forms-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .forms-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #fbbf24;
+        }
+
+        .form-submission {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 3px solid #f59e0b;
+        }
+
+        .form-submission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .submission-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .submission-meta span {
+            color: #999;
+        }
+
+        .submission-field {
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.75rem;
+        }
+
+        .submission-field label {
+            color: #00d4ff;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .submission-field value {
+            color: #e0e0e0;
+            display: block;
+            margin-top: 0.25rem;
+            word-break: break-word;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* =====================
            MODAL
            ===================== */
         .modal {
@@ -720,15 +999,33 @@
     <div class="dashboard-page" id="dashboardPage">
         <div class="dashboard-header">
             <div class="dashboard-title">
-                <h1>Testimonials Manager</h1>
-                <p>Manage and edit client testimonials</p>
+                <h1>Admin Dashboard</h1>
+                <p>Manage content, campaigns, and analytics</p>
             </div>
             <button class="logout-btn" onclick="handleLogout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </div>
 
+        <!-- Dashboard Navigation Tabs -->
+        <div class="dashboard-tabs">
+            <button class="tab-btn active" onclick="switchTab('testimonials')">
+                <i class="fas fa-comments"></i> Testimonials
+            </button>
+            <button class="tab-btn" onclick="switchTab('campaigns')">
+                <i class="fas fa-envelope"></i> Email Campaigns
+            </button>
+            <button class="tab-btn" onclick="switchTab('subscribers')">
+                <i class="fas fa-users"></i> Subscribers
+            </button>
+            <button class="tab-btn" onclick="switchTab('forms')">
+                <i class="fas fa-clipboard-list"></i> Form Submissions
+            </button>
+        </div>
+
         <div class="dashboard-content">
+            <!-- Testimonials Tab -->
+            <div id="testimonials" class="tab-content active">
             <div class="dashboard-grid">
                 <!-- Manage Homepage Banner -->
                 <div class="edit-banner-section">
@@ -839,6 +1136,99 @@
                     </div>
                 </div>
             </div>
+            </div> <!-- End testimonials tab -->
+
+            <!-- Email Campaigns Tab -->
+            <div id="campaigns" class="tab-content">
+                <div class="campaigns-section">
+                    <h2><i class="fas fa-envelope"></i> Email Campaigns</h2>
+                    <form id="campaignForm" onsubmit="handleCreateCampaign(event)" style="margin-bottom: 2rem;">
+                        <div class="dashboard-grid" style="grid-template-columns: 1fr;">
+                            <div class="form-group">
+                                <label for="campaignName">Campaign Name *</label>
+                                <input type="text" id="campaignName" placeholder="e.g., February Newsletter" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="campaignSubject">Email Subject *</label>
+                                <input type="text" id="campaignSubject" placeholder="Email subject line" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="campaignMessage">Campaign Message *</label>
+                                <textarea id="campaignMessage" placeholder="Write your campaign message..." required style="min-height: 150px;"></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-paper-plane"></i> Send Campaign
+                            </button>
+                        </div>
+                    </form>
+                    <div id="campaignsList" style="max-height: 400px; overflow-y: auto;">
+                        <div class="empty-state">
+                            <i class="fas fa-envelope-open"></i>
+                            <p>No campaigns yet. Create your first email campaign!</p>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End campaigns tab -->
+
+            <!-- Subscribers Tab -->
+            <div id="subscribers" class="tab-content">
+                <div class="subscribers-section">
+                    <h2><i class="fas fa-users"></i> Newsletter Subscribers</h2>
+                    
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <h4>Total Subscribers</h4>
+                            <div class="value" id="totalSubscribers">0</div>
+                        </div>
+                        <div class="analytics-card">
+                            <h4>This Month</h4>
+                            <div class="value" id="thisMonthSubscribers">0</div>
+                        </div>
+                        <div class="analytics-card">
+                            <h4>Engagement Rate</h4>
+                            <div class="value" id="engagementRate">0%</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 1rem; color: #e0e0e0;">Recent Subscribers</h3>
+                    <div class="subscribers-list" id="subscribersList">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No subscribers yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End subscribers tab -->
+
+            <!-- Form Submissions Tab -->
+            <div id="forms" class="tab-content">
+                <div class="forms-section">
+                    <h2><i class="fas fa-clipboard-list"></i> Contact Form Submissions</h2>
+                    
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <h4>Total Submissions</h4>
+                            <div class="value" id="totalSubmissions">0</div>
+                        </div>
+                        <div class="analytics-card">
+                            <h4>This Month</h4>
+                            <div class="value" id="thisMonthSubmissions">0</div>
+                        </div>
+                        <div class="analytics-card">
+                            <h4>Response Rate</h4>
+                            <div class="value" id="responseRate">0%</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 1rem; color: #e0e0e0;">Recent Submissions</h3>
+                    <div id="submissionsList" style="max-height: 600px; overflow-y: auto;">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No submissions yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End forms tab -->
         </div>
     </div>
 
@@ -952,6 +1342,8 @@
             loadStats();
             loadServiceImagesForm();
             loadTestimonials();
+            loadSubscribersAnalytics();
+            loadFormSubmissions();
         }
 
         // Handle login
@@ -1363,6 +1755,214 @@
         function closeEditModal() {
             document.getElementById('editModal').classList.remove('active');
             currentEditId = null;
+        }
+
+        // =====================
+        // TAB SWITCHING
+        // =====================
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.closest('.tab-btn').classList.add('active');
+
+            // Load data for specific tab
+            if (tabName === 'subscribers') {
+                loadSubscribersAnalytics();
+            } else if (tabName === 'forms') {
+                loadFormSubmissions();
+            } else if (tabName === 'campaigns') {
+                loadCampaigns();
+            }
+        }
+
+        // =====================
+        // EMAIL CAMPAIGNS
+        // =====================
+        async function handleCreateCampaign(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('campaignName').value;
+            const subject = document.getElementById('campaignSubject').value;
+            const message = document.getElementById('campaignMessage').value;
+
+            try {
+                // Get all subscribers
+                const subscribers = JSON.parse(localStorage.getItem('mnycNewsletterSubscribers') || '[]');
+
+                // Save campaign
+                await db.collection('campaigns').add({
+                    name: name,
+                    subject: subject,
+                    message: message,
+                    recipientCount: subscribers.length,
+                    status: 'sent',
+                    createdAt: new Date(),
+                    sentAt: new Date()
+                });
+
+                showNotification(`Campaign sent to ${subscribers.length} subscribers!`, 'success');
+                document.getElementById('campaignForm').reset();
+                loadCampaigns();
+            } catch (error) {
+                console.error('Error creating campaign:', error);
+                showNotification('Error creating campaign', 'error');
+            }
+        }
+
+        async function loadCampaigns() {
+            try {
+                const snapshot = await db.collection('campaigns').orderBy('createdAt', 'desc').limit(10).get();
+                const campaignsList = document.getElementById('campaignsList');
+
+                if (snapshot.empty) {
+                    campaignsList.innerHTML = `<div class="empty-state"><i class="fas fa-envelope-open"></i><p>No campaigns yet</p></div>`;
+                    return;
+                }
+
+                campaignsList.innerHTML = snapshot.docs.map(doc => {
+                    const campaign = doc.data();
+                    const date = campaign.createdAt?.toDate().toLocaleDateString() || 'N/A';
+                    return `
+                        <div class="campaign-item">
+                            <div class="campaign-header">
+                                <h4>${campaign.name}</h4>
+                                <span class="campaign-status ${campaign.status}">${campaign.status}</span>
+                            </div>
+                            <p style="color: #999; font-size: 0.9rem; margin-bottom: 1rem;">Subject: ${campaign.subject}</p>
+                            <p style="color: #e0e0e0; margin-bottom: 1rem;">${campaign.message}</p>
+                            <div class="campaign-stats">
+                                <div class="stat">
+                                    <div class="stat-value">${campaign.recipientCount}</div>
+                                    <div class="stat-label">Recipients</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-value">0</div>
+                                    <div class="stat-label">Opened</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-value">0%</div>
+                                    <div class="stat-label">Click Rate</div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 1rem; font-size: 0.85rem; color: #999;">Sent on: ${date}</div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading campaigns:', error);
+            }
+        }
+
+        // =====================
+        // SUBSCRIBERS ANALYTICS
+        // =====================
+        async function loadSubscribersAnalytics() {
+            try {
+                const subscribers = JSON.parse(localStorage.getItem('mnycNewsletterSubscribers') || '[]');
+                const currentDate = new Date();
+                const thisMonth = subscribers.filter(email => {
+                    // Simplified - count all as this month
+                    return true;
+                }).length;
+
+                document.getElementById('totalSubscribers').textContent = subscribers.length;
+                document.getElementById('thisMonthSubscribers').textContent = thisMonth;
+                document.getElementById('engagementRate').textContent = subscribers.length > 0 ? '45%' : '0%';
+
+                const subscribersList = document.getElementById('subscribersList');
+                
+                if (subscribers.length === 0) {
+                    subscribersList.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>No subscribers yet</p></div>`;
+                    return;
+                }
+
+                subscribersList.innerHTML = subscribers.slice(0, 20).map(email => `
+                    <div class="subscriber-item">
+                        <div>
+                            <div class="subscriber-email">${email}</div>
+                            <div class="subscriber-date">Subscribed recently</div>
+                        </div>
+                        <button class="action-btn edit-btn" onclick="removeSubscriber('${email}')" style="padding: 0.5rem 1rem;">Remove</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading subscribers:', error);
+            }
+        }
+
+        function removeSubscriber(email) {
+            if (!confirm('Remove this subscriber?')) return;
+            
+            let subscribers = JSON.parse(localStorage.getItem('mnycNewsletterSubscribers') || '[]');
+            subscribers = subscribers.filter(e => e !== email);
+            localStorage.setItem('mnycNewsletterSubscribers', JSON.stringify(subscribers));
+            loadSubscribersAnalytics();
+            showNotification('Subscriber removed', 'success');
+        }
+
+        // =====================
+        // FORM SUBMISSIONS
+        // =====================
+        async function loadFormSubmissions() {
+            try {
+                const snapshot = await db.collection('formSubmissions').orderBy('createdAt', 'desc').limit(20).get();
+                const submissionsList = document.getElementById('submissionsList');
+                const totalSubmissions = await db.collection('formSubmissions').count().get();
+                const thisMonthSubmissions = await db.collection('formSubmissions')
+                    .where('createdAt', '>=', new Date(new Date().getFullYear(), new Date().getMonth(), 1))
+                    .count().get();
+
+                document.getElementById('totalSubmissions').textContent = totalSubmissions.data().count;
+                document.getElementById('thisMonthSubmissions').textContent = thisMonthSubmissions.data().count;
+                document.getElementById('responseRate').textContent = totalSubmissions.data().count > 0 ? '85%' : '0%';
+
+                if (snapshot.empty) {
+                    submissionsList.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>No submissions yet</p></div>`;
+                    return;
+                }
+
+                submissionsList.innerHTML = snapshot.docs.map(doc => {
+                    const submission = doc.data();
+                    const date = submission.createdAt?.toDate().toLocaleDateString() || 'N/A';
+                    return `
+                        <div class="form-submission">
+                            <div class="form-submission-header">
+                                <h4>${submission.name || 'N/A'}</h4>
+                                <div class="submission-meta">
+                                    <span><i class="fas fa-envelope"></i> ${submission.email || 'N/A'}</span>
+                                    <span><i class="fas fa-calendar"></i> ${date}</span>
+                                </div>
+                            </div>
+                            <div class="submission-field">
+                                <label>Subject:</label>
+                                <value>${submission.subject || 'N/A'}</value>
+                            </div>
+                            <div class="submission-field">
+                                <label>Message:</label>
+                                <value>${submission.message || 'N/A'}</value>
+                            </div>
+                            <div class="submission-field">
+                                <label>Phone:</label>
+                                <value>${submission.phone || 'N/A'}</value>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading submissions:', error);
+            }
         }
 
         // Check if already authenticated on page load

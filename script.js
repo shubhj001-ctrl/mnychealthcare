@@ -101,17 +101,82 @@ const validatePhone = (phone) => {
     return phone === '' || re.test(phone);
 };
 
+const validateName = (name) => {
+    return name.trim().length >= 2;
+};
+
+const validateMessage = (message) => {
+    return message.trim().length >= 10;
+};
+
 const showError = (field, message) => {
     const formGroup = field.parentElement;
     const errorMessage = formGroup.querySelector('.error-message');
     formGroup.classList.add('error');
-    errorMessage.textContent = message;
+    if (errorMessage) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+    }
+    field.setAttribute('aria-invalid', 'true');
 };
 
 const removeError = (field) => {
     const formGroup = field.parentElement;
     formGroup.classList.remove('error');
+    const errorMessage = formGroup.querySelector('.error-message');
+    if (errorMessage) {
+        errorMessage.style.display = 'none';
+    }
+    field.setAttribute('aria-invalid', 'false');
 };
+
+// Real-time validation
+if (contactForm) {
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+    const messageInput = document.getElementById('message');
+
+    if (nameInput) {
+        nameInput.addEventListener('blur', () => {
+            if (!validateName(nameInput.value)) {
+                showError(nameInput, 'Name must be at least 2 characters');
+            } else {
+                removeError(nameInput);
+            }
+        });
+    }
+
+    if (emailInput) {
+        emailInput.addEventListener('blur', () => {
+            if (!validateEmail(emailInput.value)) {
+                showError(emailInput, 'Please enter a valid email');
+            } else {
+                removeError(emailInput);
+            }
+        });
+    }
+
+    if (phoneInput) {
+        phoneInput.addEventListener('blur', () => {
+            if (!validatePhone(phoneInput.value)) {
+                showError(phoneInput, 'Please enter a valid phone number');
+            } else {
+                removeError(phoneInput);
+            }
+        });
+    }
+
+    if (messageInput) {
+        messageInput.addEventListener('blur', () => {
+            if (!validateMessage(messageInput.value)) {
+                showError(messageInput, 'Message must be at least 10 characters');
+            } else {
+                removeError(messageInput);
+            }
+        });
+    }
+}
 
 const showNotification = (message, type = 'success') => {
     notification.textContent = message;
@@ -565,6 +630,92 @@ window.addEventListener('storage', function(e) {
         loadTestimonialsFromStorage();
     }
 });
+
+// =====================
+// Newsletter Signup
+// =====================
+const newsletterForm = document.getElementById('newsletterForm');
+if (newsletterForm) {
+    newsletterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const emailInput = newsletterForm.querySelector('input[type="email"]');
+        const email = emailInput.value.trim();
+
+        if (validateEmail(email)) {
+            // Store newsletter subscription
+            try {
+                const subscribers = JSON.parse(localStorage.getItem('mnycNewsletterSubscribers') || '[]');
+                if (!subscribers.includes(email)) {
+                    subscribers.push(email);
+                    localStorage.setItem('mnycNewsletterSubscribers', JSON.stringify(subscribers));
+                }
+            } catch (err) {
+                console.error('Error saving subscription:', err);
+            }
+
+            // Show success message
+            showNotification('Thank you for subscribing! Check your email for updates.', 'success');
+            emailInput.value = '';
+        } else {
+            showNotification('Please enter a valid email address', 'error');
+        }
+    });
+}
+
+// =====================
+// Admin Dashboard - Update Statistics
+// =====================
+const handleUpdateStats = async (event) => {
+    event.preventDefault();
+    
+    try {
+        const db = firebase.firestore();
+        
+        // Get form values
+        const clientsCount = parseInt(document.getElementById('clientsCount').value);
+        const yearsExperience = parseInt(document.getElementById('yearsExperience').value);
+        const transactionsCount = parseInt(document.getElementById('transactionsCount').value);
+        const uptimePercent = parseInt(document.getElementById('uptimePercent').value);
+        
+        // Validate inputs
+        if (!clientsCount || !yearsExperience || !transactionsCount || !uptimePercent) {
+            showNotification('Please fill in all fields', 'error');
+            return;
+        }
+        
+        // Prepare stats data
+        const statsData = {
+            clients: clientsCount,
+            years: yearsExperience,
+            transactions: transactionsCount,
+            uptime: uptimePercent,
+            updatedAt: new Date().toISOString()
+        };
+        
+        // Save to Firestore
+        await db.collection('website').doc('stats').set(statsData, { merge: true });
+        
+        // Update display immediately
+        const counters = document.querySelectorAll('.stat-number');
+        if (counters.length >= 4) {
+            counters[0].setAttribute('data-target', clientsCount);
+            counters[1].setAttribute('data-target', yearsExperience);
+            counters[2].setAttribute('data-target', transactionsCount);
+            counters[3].setAttribute('data-target', uptimePercent);
+        }
+        
+        // Reset form
+        document.getElementById('statsForm').reset();
+        
+        // Show success message
+        showNotification('Statistics updated successfully! 🎉', 'success');
+        
+        console.log('Stats updated:', statsData);
+    } catch (error) {
+        console.error('Error updating statistics:', error);
+        showNotification('Error updating statistics. Please try again.', 'error');
+    }
+};
 
 // =====================
 // FAQ Accordion
