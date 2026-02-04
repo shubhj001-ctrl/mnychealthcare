@@ -1173,6 +1173,16 @@ small {
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
+}
+
+.info-card-link {
+    display: flex;
+    gap: 1.75rem;
+    align-items: flex-start;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+}
     border: 1px solid rgba(0, 102, 204, 0.5);
 }
 
