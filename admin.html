@@ -1304,6 +1304,15 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
+        // Enable offline persistence for better reliability
+        db.enablePersistence().catch((err) => {
+            if (err.code == 'failed-precondition') {
+                console.log('Persistence failed: multiple tabs open');
+            } else if (err.code == 'unimplemented') {
+                console.log('Persistence not supported');
+            }
+        });
+
         // Constants
         const CORRECT_ID = 'master.mnyc';
         const CORRECT_PASSWORD = 'Shubh@0924';
@@ -1461,7 +1470,7 @@
                     years: yearsExperience,
                     transactions: transactionsCount,
                     uptime: uptimePercent,
-                    updatedAt: new Date().toISOString()
+                    updatedAt: firebase.firestore.Timestamp.now()
                 };
 
                 console.log('💾 Saving to Firestore:', statsData);
@@ -1474,24 +1483,40 @@
                 }
 
                 // Save to Firestore with merge: true
-                await db.collection('website').doc('stats').set(statsData, { merge: true });
+                const result = await db.collection('website').doc('stats').set(statsData, { merge: true });
                 
-                console.log('✅ Successfully saved to Firestore!');
+                console.log('✅ Successfully saved to Firestore! Result:', result);
                 showNotification('✅ Statistics updated and saved successfully!', 'success');
                 
-                // Verify data was saved by reading it back
-                const verify = await db.collection('website').doc('stats').get();
-                if (verify.exists) {
-                    console.log('✅ Verification: Data confirmed in Firestore:', verify.data());
-                } else {
-                    console.warn('⚠️ Warning: Document not found after save');
-                }
+                // Verify data was saved by reading it back after a short delay
+                setTimeout(async () => {
+                    try {
+                        const verify = await db.collection('website').doc('stats').get();
+                        if (verify.exists) {
+                            console.log('✅ Verification: Data confirmed in Firestore:', verify.data());
+                        } else {
+                            console.warn('⚠️ Warning: Document not found after save');
+                        }
+                    } catch (verifyError) {
+                        console.error('⚠️ Verification read failed:', verifyError);
+                    }
+                }, 500);
 
             } catch (error) {
                 console.error('❌ Error in handleUpdateStats:', error);
                 console.error('Error message:', error.message);
                 console.error('Error code:', error.code);
-                showNotification('❌ Error saving statistics: ' + error.message, 'error');
+                
+                // Provide specific error guidance
+                let errorMsg = error.message;
+                if (error.code === 'permission-denied') {
+                    errorMsg = 'Permission denied - Check Firestore security rules. The database may not allow writes.';
+                    console.error('📋 You need to update Firestore rules to allow writes to the "website" collection.');
+                } else if (error.code === 'unauthenticated') {
+                    errorMsg = 'Authentication required - Please ensure you are logged in.';
+                }
+                
+                showNotification('❌ Error saving statistics: ' + errorMsg, 'error');
             }
         }
 
