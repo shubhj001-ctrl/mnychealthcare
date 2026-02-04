@@ -1434,24 +1434,64 @@
         // Handle update stats
         async function handleUpdateStats(event) {
             event.preventDefault();
-
-            const stats = {
-                clients: parseInt(document.getElementById('clientsCount').value),
-                years: parseInt(document.getElementById('yearsExperience').value),
-                transactions: parseInt(document.getElementById('transactionsCount').value),
-                uptime: parseInt(document.getElementById('uptimePercent').value),
-                updatedAt: new Date().toISOString()
-            };
+            console.log('📝 Form submitted for stats update');
 
             try {
-                console.log('Saving stats to Firestore:', stats);
-                // Save to Firestore with merge: true to keep other fields
-                await db.collection('website').doc('stats').set(stats, { merge: true });
-                console.log('✅ Stats successfully saved to Firestore!');
-                showNotification('✅ Statistics updated successfully! Changes are now live.', 'success');
+                const clientsCount = parseInt(document.getElementById('clientsCount').value) || 0;
+                const yearsExperience = parseInt(document.getElementById('yearsExperience').value) || 0;
+                const transactionsCount = parseInt(document.getElementById('transactionsCount').value) || 0;
+                const uptimePercent = parseInt(document.getElementById('uptimePercent').value) || 0;
+
+                console.log('📊 Form values:', {
+                    clients: clientsCount,
+                    years: yearsExperience,
+                    transactions: transactionsCount,
+                    uptime: uptimePercent
+                });
+
+                // Validate inputs
+                if (!clientsCount || !yearsExperience || !transactionsCount || !uptimePercent) {
+                    console.error('❌ Validation failed - missing values');
+                    showNotification('❌ Please fill in all fields with valid numbers', 'error');
+                    return;
+                }
+
+                const statsData = {
+                    clients: clientsCount,
+                    years: yearsExperience,
+                    transactions: transactionsCount,
+                    uptime: uptimePercent,
+                    updatedAt: new Date().toISOString()
+                };
+
+                console.log('💾 Saving to Firestore:', statsData);
+                
+                // Ensure db is available
+                if (!db) {
+                    console.error('❌ Firebase db not initialized');
+                    showNotification('Error: Firebase not initialized', 'error');
+                    return;
+                }
+
+                // Save to Firestore with merge: true
+                await db.collection('website').doc('stats').set(statsData, { merge: true });
+                
+                console.log('✅ Successfully saved to Firestore!');
+                showNotification('✅ Statistics updated and saved successfully!', 'success');
+                
+                // Verify data was saved by reading it back
+                const verify = await db.collection('website').doc('stats').get();
+                if (verify.exists) {
+                    console.log('✅ Verification: Data confirmed in Firestore:', verify.data());
+                } else {
+                    console.warn('⚠️ Warning: Document not found after save');
+                }
+
             } catch (error) {
-                console.error('❌ Error saving stats:', error);
-                showNotification('Error saving statistics: ' + error.message, 'error');
+                console.error('❌ Error in handleUpdateStats:', error);
+                console.error('Error message:', error.message);
+                console.error('Error code:', error.code);
+                showNotification('❌ Error saving statistics: ' + error.message, 'error');
             }
         }
 
